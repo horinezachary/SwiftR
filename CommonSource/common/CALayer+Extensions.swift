@@ -29,18 +29,28 @@ extension CALayer {
         return true
     }
 	
-	func fadeBackground(toColor color: SRColor, duration: Double, timing: String = kCAMediaTimingFunctionEaseOut) {
+	func fadeBackground(toColor color: SRColor, duration: Double, timing: String = convertFromCAMediaTimingFunctionName(CAMediaTimingFunctionName.easeOut)) {
 		CATransaction.begin()
 		let animation = CABasicAnimation(keyPath: "backgroundColor")
 		CATransaction.setCompletionBlock({
 			self.backgroundColor = SRColor.blue.cgColor
 		})
 		animation.duration = 2.0
-		animation.timingFunction = CAMediaTimingFunction(name: timing)
+		animation.timingFunction = CAMediaTimingFunction(name: convertToCAMediaTimingFunctionName(timing))
 		animation.toValue = SRColor.blue.cgColor
 		self.add(animation, forKey: "backgroundColor")
 		
 		CATransaction.commit()
 	}
 	
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCAMediaTimingFunctionName(_ input: CAMediaTimingFunctionName) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCAMediaTimingFunctionName(_ input: String) -> CAMediaTimingFunctionName {
+	return CAMediaTimingFunctionName(rawValue: input)
 }

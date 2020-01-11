@@ -20,7 +20,7 @@ open class SRMergePlotView: SRPlotView {
             let textSize = "\(self.maxDataRange)".size(withAttributes: [NSFontAttributeName: SRFont.boldSystemFont(ofSize: 20)])
 			#elseif os(iOS)
 				
-			let textSize = "\(self.maxDataRange)".size(attributes: [NSFontAttributeName: SRFont.boldSystemFont(ofSize: 20)])
+			let textSize = "\(self.maxDataRange)".size(withAttributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): SRFont.boldSystemFont(ofSize: 20)]))
 			#endif
 			
             self.axeLayer?.padding.x = newValue < 10 ? textSize.width * 3: textSize.width
@@ -84,4 +84,15 @@ open class SRMergePlotView: SRPlotView {
         }
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

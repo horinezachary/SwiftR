@@ -150,12 +150,12 @@ fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
         
         while displaySize < largestSize {
             let nsTitle = NSString(string: title)
-            let attributes = [NSFontAttributeName: SRFont.boldSystemFont(ofSize: displaySize)]
+            let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): SRFont.boldSystemFont(ofSize: displaySize)]
 			
 			#if os(macOS)
             textSize = nsTitle.size(withAttributes: attributes)
 			#elseif os(iOS)
-			textSize = nsTitle.size(attributes: attributes)
+			textSize = nsTitle.size(withAttributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
 			#endif
 			
             if textSize.width < self.bounds.width * 0.8 {
@@ -166,4 +166,15 @@ fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
         }
         return largestSize
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

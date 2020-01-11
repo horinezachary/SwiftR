@@ -297,14 +297,14 @@ open class HashDrawer
         
         func drawAnchoredToPoint(_ context: CGContext, location: CGPoint, color: SRColor) {
             let attributes = [
-                NSFontAttributeName : SRFont.boldSystemFont(ofSize: 15),
-                NSForegroundColorAttributeName : color
+                convertFromNSAttributedStringKey(NSAttributedString.Key.font) : SRFont.boldSystemFont(ofSize: 15),
+                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : color
             ]
 			
 			#if os(macOS)
 				var textRect = CGRect(center: location, size: text.size(withAttributes: attributes))
 			#elseif os(iOS)
-				var textRect = CGRect(center: location, size: text.size(attributes: attributes))
+				var textRect = CGRect(center: location, size: text.size(withAttributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
 			#endif
 			
             switch self {
@@ -315,7 +315,7 @@ open class HashDrawer
             }
             
             //Core text draw function
-            let gString = NSMutableAttributedString(string:text, attributes:attributes)
+            let gString = NSMutableAttributedString(string:text, attributes:convertToOptionalNSAttributedStringKeyDictionary(attributes))
             let line = CTLineCreateWithAttributedString(gString)
 					
 			context.textPosition = textRect.origin;
@@ -351,14 +351,14 @@ open class HashDrawer
     
     open func getTextRect(_ center: CGPoint, text: String) -> CGRect {
         let attributes = [
-            NSFontAttributeName : SRFont.boldSystemFont(ofSize: 15),
-            NSForegroundColorAttributeName : color
+            convertFromNSAttributedStringKey(NSAttributedString.Key.font) : SRFont.boldSystemFont(ofSize: 15),
+            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : color
         ] as [String : Any]
 		
 		#if os(macOS)
         return CGRect(center: center, size: text.size(withAttributes: attributes))
 		#elseif os(iOS)
-		return CGRect(center: center, size: text.size(attributes: attributes))
+		return CGRect(center: center, size: text.size(withAttributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
 		#endif
     }
     
@@ -367,3 +367,14 @@ open class HashDrawer
     }
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}

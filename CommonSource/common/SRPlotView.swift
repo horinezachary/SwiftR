@@ -49,7 +49,7 @@
 				#if os(macOS)
                 let textSize = label.size(withAttributes: [NSFontAttributeName: SRFont.boldSystemFont(ofSize: 20)])
 				#elseif os(iOS)
-				let textSize = label.size(attributes: [NSFontAttributeName: SRFont.boldSystemFont(ofSize: 20)])
+				let textSize = label.size(withAttributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): SRFont.boldSystemFont(ofSize: 20)]))
 				#endif
 				
                 if textSize.width > maxFrameWidth {
@@ -160,7 +160,7 @@
         self.performSelector(onMainThread: #selector(SRPlotView.addDataInMainthread(_:)), with: data, waitUntilDone: true)
     }
 	
-	func addDataInMainthread(_ data: [Double]) {
+	@objc func addDataInMainthread(_ data: [Double]) {
         if current == nil {
             current = addSegment()
         }
@@ -311,4 +311,15 @@
         axeLayer?.layer.frame.size.width = self.frame.width
         axeLayer?.layer.setNeedsDisplay()
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

@@ -37,7 +37,7 @@ extension SRView {
 		DispatchQueue.main.async(execute: {
 				
 			CATransaction.begin()
-			CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn))
+			CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeIn))
 			CATransaction.setAnimationDuration(0.25)
 			if self.isHidden && alpha == 1 {
 				self.isHidden = false
